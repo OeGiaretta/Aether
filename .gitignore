@@ -180,4 +180,5 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-./doc.md
+doc.md
+anotações.md
