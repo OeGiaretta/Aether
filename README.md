@@ -1,18 +1,9 @@
-Perfeito, boa! 👌
-Nesse caso, é só ajustar o caminho do banner no README pra apontar pra `assets/images/aether_banner.png`.
 
-Aqui vai o mesmo README já **corrigido e pronto pra colar**, com o caminho atualizado e tudo redondinho pra funcionar direto no GitHub:
 
----
-
-```markdown
+<h1 align="center">🌌 AETHER – Dashboard Automotivo Inteligente
+</h1>
 <p align="center">
-  <img src="assets/images/Aether.png" alt="AETHER Logo" width="600"/>
-</p>
 
-<h1 align="center">🌌 AETHER – Dashboard Automotivo Inteligente</h1>
-
-<p align="center">
   <b>Conecte-se ao coração do seu carro.</b><br>
   Diagnóstico automotivo moderno com visual futurista e integração OBD-II Bluetooth.
 </p>
@@ -39,7 +30,6 @@ O projeto une **tecnologia, design e performance**, servindo como ferramenta pr�
 ## 📦 Estrutura do Projeto
 
 ```
-
 AETHER/
 ├── core/
 │   ├── obd_reader.py
@@ -73,8 +63,7 @@ AETHER/
 ├── requirements.txt
 ├── README.md
 └── .env
-
-````
+```
 
 ---
 
