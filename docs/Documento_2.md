@@ -1,5 +1,3 @@
-Vou explicar tudo que foi feito até agora, o porquê de cada decisão e como cada parte funciona no contexto do projeto AETHER.
-
 ## 📋 Resumo do que foi implementado
 
 ### 1. **Contrato de Dados (`utils/types.py`)**
@@ -175,6 +173,3 @@ python dev_run.py
 # ✅ Conectado: True
 # 📡 Fonte: mock
 # ...
-```
-
-Quer que eu crie os arquivos que faltam (`sensor_map.py` e `data_manager.py`) para você poder testar o fluxo completo?
