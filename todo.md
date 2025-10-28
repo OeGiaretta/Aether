@@ -10,17 +10,17 @@
 
 | Etapa | Progresso | Barra |
 |:------|:-----------:|:------|
-| Core | 20% | ███░░░░░░░░ |
+| Core | 60% | ██████░░░░░ |
 | UI Streamlit | 10% | ██░░░░░░░░░ |
 | UI Terminal (TUI) | 0% | ░░░░░░░░░░░ |
-| Utils | 15% | ███░░░░░░░░ |
+| Utils | 40% | ████░░░░░░░ |
 | Testes | 0% | ░░░░░░░░░░░ |
 | Documentação | 60% | ███████░░░░ |
 | Assets | 40% | █████░░░░░░ |
-| CLI / Main | 25% | ████░░░░░░░ |
+| CLI / Main | 30% | ███░░░░░░░░ |
 
 **Progresso total estimado:**  
-🟣 **32% concluído** — o projeto está em fase inicial, com documentação sólida e arquitetura definida.
+🟢 **45% concluído** — núcleo funcional com mock reader e contrato de dados implementados.
 
 ---
 
@@ -28,13 +28,13 @@
 
 ### 📦 Etapa 1 — Núcleo do Sistema (Core)
 - [X] Definir contrato de dados (payload padrão, unidades, flags `ok`, `errors`)  
-- [ ] `sensor_map.py` — mapeamento de PIDs, unidades e faixas válidas  
-- [ ] `obd_reader.py` — implementar `MockObdReader` primeiro (geração de sinais plausíveis)  
-- [ ] `data_manager.py` — normalização, conversões e clamps por faixa  
+- [X] `sensor_map.py` — mapeamento de PIDs, unidades e faixas válidas  
+- [X] `obd_reader.py` — implementar `MockObdReader` primeiro (geração de sinais plausíveis)  
+- [X] `data_manager.py` — normalização, conversões e clamps por faixa  
 - [ ] `logger.py` — registro de logs e erros  
 - [ ] `storage.py` — armazenamento local (CSV mínimo, preparar para SQLite depois)  
 
-> ⏳ **Progresso:** 20% — priorizar Mock + contrato de dados antes do OBD real  
+> ✅ **Progresso:** 60% — Mock reader funcional, contrato de dados e normalização implementados  
 
 ---
 
@@ -55,10 +55,11 @@
 
 ### 🧰 Etapa 3 — Utilitários e Suporte (Utils)
 - [x] `config.py` — parâmetros de conexão e refresh  
+- [x] `types.py` — definição de contratos de dados (TypedDict, Protocol)  
 - [ ] `constants.py` — definição de PIDs e nomes de sensores  
 - [ ] `helpers.py` — funções auxiliares  
 
-> ⚙️ **Progresso:** 15%  
+> ⚙️ **Progresso:** 40%  
 
 ---
 
@@ -82,10 +83,11 @@
 ---
 
 ### 🚀 Etapa 6 — Execução e CLI
+- [x] `dev_run.py` — script de teste do fluxo mock → data_manager  
 - [ ] `cli.py` — flags `--ui streamlit|terminal` e `--source mock|obd` (fallback automático)  
 - [ ] `main.py` — inicialização central com fallback para `mock` se OBD falhar  
 
-> ⚡ **Progresso:** 25%  
+> ⚡ **Progresso:** 30%  
 
 ---
 
@@ -112,11 +114,11 @@
 ---
 
 ## 📅 Próximos Passos
-1. Finalizar `utils/constants.py` e `core/sensor_map.py` (PIDs e faixas)  
-2. Definir contrato de dados entre `obd_reader` → `data_manager` → UI  
-3. Implementar `MockObdReader` e habilitar `--source mock`  
-4. Criar Streamlit MVP (3–5 PIDs, histórico curto)  
-5. Implementar `data_manager` (normalização, conversões, clamps)  
+1. ✅ ~~Finalizar `utils/constants.py` e `core/sensor_map.py` (PIDs e faixas)~~  
+2. ✅ ~~Definir contrato de dados entre `obd_reader` → `data_manager` → UI~~  
+3. ✅ ~~Implementar `MockObdReader` e habilitar `--source mock`~~  
+4. ✅ ~~Implementar `data_manager` (normalização, conversões, clamps)~~  
+5. Criar Streamlit MVP (3–5 PIDs, histórico curto)  
 6. Adicionar logs e storage mínimos (CSV)  
 7. Implementar `cli.py`/`main.py` com flags e fallback automático  
 8. Implementar OBD real (ELM327) com fallback para mock  
@@ -134,6 +136,6 @@
 ---
 
 ### 🏁 Status Final
-> 🔵 **AETHER está em fase de fundação** — a estrutura foi consolidada, o design de arquitetura finalizado e a fase de integração OBD-II está prestes a começar.  
+> 🟢 **AETHER tem núcleo funcional** — mock reader, contrato de dados e normalização implementados. Pronto para desenvolvimento da interface Streamlit MVP.  
 
 ---
