@@ -27,13 +27,14 @@
 ## 🧠 Estrutura do Desenvolvimento
 
 ### 📦 Etapa 1 — Núcleo do Sistema (Core)
-- [ ] `obd_reader.py` — leitura dos dados via OBD-II Bluetooth  
-- [ ] `data_manager.py` — processamento e normalização dos dados  
-- [ ] `sensor_map.py` — mapeamento de PIDs e unidades  
+- [X] Definir contrato de dados (payload padrão, unidades, flags `ok`, `errors`)  
+- [ ] `sensor_map.py` — mapeamento de PIDs, unidades e faixas válidas  
+- [ ] `obd_reader.py` — implementar `MockObdReader` primeiro (geração de sinais plausíveis)  
+- [ ] `data_manager.py` — normalização, conversões e clamps por faixa  
 - [ ] `logger.py` — registro de logs e erros  
-- [ ] `storage.py` — armazenamento local e histórico  
+- [ ] `storage.py` — armazenamento local (CSV mínimo, preparar para SQLite depois)  
 
-> ⏳ **Progresso:** 20% — arquitetura pronta, leitura OBD em planejamento  
+> ⏳ **Progresso:** 20% — priorizar Mock + contrato de dados antes do OBD real  
 
 ---
 
@@ -44,11 +45,11 @@
 - [ ] `widgets/` — componentes visuais (cards, indicadores, gauges)  
 - [ ] `charts/` — gráficos de histórico  
 
-> ⏳ **Progresso:** 10% — estrutura base em criação  
+> ⏳ **Progresso:** 10% — MVP primeiro (3–5 PIDs), histórico curto  
 
 #### 💻 Modo Terminal – TUI
 - [ ] `terminal_dashboard.py` — interface estilo *htop*  
-> ⏳ **Progresso:** 0% — aguardando definição da biblioteca (`rich` ou `textual`)  
+> ⏳ **Progresso:** 0% — iniciar após Streamlit MVP (usar `rich` inicialmente)  
 
 ---
 
@@ -62,8 +63,10 @@
 ---
 
 ### 🧪 Etapa 4 — Testes
-- [ ] `test_obd_reader.py` — simulação de leitura e falhas  
-- [ ] `test_data_manager.py` — validação de conversões  
+- [ ] `test_sensor_map.py` — valida metadados e faixas  
+- [ ] `test_data_manager.py` — normalização e conversões  
+- [ ] `test_obd_reader_mock.py` — geração de sinais e contrato  
+- [ ] `test_obd_reader.py` (integração) — OBD real quando disponível  
 
 > 🧱 **Progresso:** 0% — aguardando núcleo estável  
 
@@ -79,8 +82,8 @@
 ---
 
 ### 🚀 Etapa 6 — Execução e CLI
-- [ ] `cli.py` — interface de linha de comando (`--web`, `--tui`)  
-- [ ] `main.py` — inicialização central  
+- [ ] `cli.py` — flags `--ui streamlit|terminal` e `--source mock|obd` (fallback automático)  
+- [ ] `main.py` — inicialização central com fallback para `mock` se OBD falhar  
 
 > ⚡ **Progresso:** 25%  
 
@@ -91,6 +94,9 @@
 - [x] `AETHER_Arquitetura.md` — mapa do sistema  
 - [ ] Documentação de API  
 - [ ] Guia de instalação e uso  
+- [ ] Guia OBD-II multi-OS (Windows/macOS/Linux): pareamento, porta serial, permissões  
+- [ ] Troubleshooting: timeouts, COM/tty incorreto, permissões e drivers  
+- [ ] Tabela de PIDs suportados no MVP  
 
 > 📚 **Progresso:** 60%  
 
@@ -106,11 +112,16 @@
 ---
 
 ## 📅 Próximos Passos
-1. Implementar `obd_reader` e `data_manager` com leitura real via ELM327  
-2. Criar dashboard Streamlit mínimo funcional  
-3. Adicionar TUI básico  
-4. Registrar logs e histórico  
-5. Testar comunicação multiplataforma  
+1. Finalizar `utils/constants.py` e `core/sensor_map.py` (PIDs e faixas)  
+2. Definir contrato de dados entre `obd_reader` → `data_manager` → UI  
+3. Implementar `MockObdReader` e habilitar `--source mock`  
+4. Criar Streamlit MVP (3–5 PIDs, histórico curto)  
+5. Implementar `data_manager` (normalização, conversões, clamps)  
+6. Adicionar logs e storage mínimos (CSV)  
+7. Implementar `cli.py`/`main.py` com flags e fallback automático  
+8. Implementar OBD real (ELM327) com fallback para mock  
+9. Adicionar TUI básico após MVP Web  
+10. Criar bateria de testes (sensor_map, data_manager, mock, integração OBD)  
 
 ---
 
