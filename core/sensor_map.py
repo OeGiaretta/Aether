@@ -1,3 +1,5 @@
+from utils.constants import SENSOR_DEFS as SENSOR_MAP
+
 # Sensor Map is a dictionary that maps PIDs to units and ranges
 SENSOR_MAP = {
     "rpm": {"unit": "rpm", "min": 0.0, "max": 8000.0, "pid": "010C"},

@@ -3,6 +3,11 @@ from collections import deque
 from datetime import datetime
 from typing import Deque, Dict, List, Optional
 
+# Guard: evitar execução via Streamlit
+if 'streamlit' in sys.modules:
+    print("This is a terminal UI (Rich), not a Streamlit app.\nRun with: python ui/terminal_dashboard.py")
+    sys.exit(1)
+
 from rich.live import Live
 from rich.table import Table
 from rich.panel import Panel
@@ -32,7 +37,7 @@ console = Console()
 # Categorias de sensores
 CATEGORIES: Dict[str, List[str]] = {
     "all": [
-        "rpm", "speed", "coolant_temp", "throttle", "engine_load", "intake_temp", "map"
+    "rpm", "speed", "coolant_temp", "throttle", "engine_load", "intake_temp", "map"
     ],
     "performance": ["rpm", "engine_load", "throttle"],
     "thermal": ["coolant_temp", "intake_temp"],
@@ -59,15 +64,14 @@ def header_panel(payload) -> Panel:
     ts = datetime.fromtimestamp(payload["timestamp"]).strftime("%H:%M:%S")
     src = payload["source"]
     errs = len(payload["errors"]) or 0
-    title = f"AETHER TUI — {ts}  |  source={src}  |  errors={errs}  |  category={current_category.upper()}"
+    title = f"AETHER TUI — {ts} | source={src} | errors={errs} | {current_category.upper()}"
     return Panel(title, style="bold magenta", border_style="magenta")
 
 
 def controls_panel() -> Panel:
     lines = [
-        "[bold]Controls[/bold]  [dim](press keys)[/dim]",
-        "[1] Performance   [2] Thermal   [3] Pressure   [4] Movement   [A] All   [Q] Quit",
-        f"[dim]Current: {current_category.upper()}[/dim]",
+        "[bold]Controls[/bold] [dim](press keys)[/dim]",
+        "[1]Perf [2]Therm [3]Press [4]Move [A]All [Q]Quit",
     ]
     return Panel("\n".join(lines), border_style="white")
 
@@ -80,7 +84,7 @@ def gauge_row(name: str, value: float, unit: str, lo: float, hi: float, ok: bool
 
     # Barra curta para caber no terminal
     term_width = console.size.width
-    bar_len = max(8, min(24, term_width // 6))
+    bar_len = max(6, min(20, term_width // 8))
 
     p = percent(value, lo, hi)
     filled = int(p * bar_len)
@@ -88,22 +92,36 @@ def gauge_row(name: str, value: float, unit: str, lo: float, hi: float, ok: bool
     bar.stylize("green" if ok else "red")
 
     left = Text(name, style="bold cyan")
-    right = Text(f"{value:.2f} {unit}")
+    right = Text(f"{value:.0f} {unit}")
 
     tbl.add_row(left, bar, right)
     return tbl
 
 
+def _cap_items(names: List[str], max_rows: int) -> List[str]:
+    if max_rows <= 0:
+        return []
+    return names[:max_rows]
+
+
 def sensors_gauges_panel(payload) -> Panel:
     names = CATEGORIES.get(current_category, CATEGORIES["all"])
-    grid = Table.grid(expand=True)
-    grid.add_column()
-    grid.add_column()
+
+    # Calcular quantos gauges cabem por coluna baseado na altura
+    term_height = console.size.height
+    # Reservar linhas para cabeçalho/controles/erros e outras seções
+    available_for_gauges = max(6, int(term_height * 0.33))
+    # Aproximar 1 linha por gauge + margens
+    per_col_max = max(2, available_for_gauges - 4)
 
     # duas colunas compactas
     mid = (len(names) + 1) // 2
-    left_names = names[:mid]
-    right_names = names[mid:]
+    left_names = _cap_items(names[:mid], per_col_max)
+    right_names = _cap_items(names[mid:], per_col_max)
+
+    grid = Table.grid(expand=True)
+    grid.add_column()
+    grid.add_column()
 
     def build_col(names_sel: List[str]) -> Table:
         col = Table.grid(expand=True)
@@ -123,21 +141,130 @@ def sensors_gauges_panel(payload) -> Panel:
 
 def sensors_status_table_panel(payload) -> Panel:
     names = CATEGORIES.get(current_category, CATEGORIES["all"])
+
+    # Calcular quantas linhas cabem na tabela
+    term_height = console.size.height
+    available_for_table = max(6, int(term_height * 0.22))
+    # 1 linha por item + header + margens
+    max_items = max(3, available_for_table - 3)
+
     table = Table(expand=True, show_header=True, header_style="bold white")
     table.add_column("Sensor", style="cyan", ratio=3)
-    table.add_column("Value", justify="right", ratio=2)
-    table.add_column("Unit", ratio=1)
-    table.add_column("Status", justify="center", ratio=1)
+    table.add_column("Val", justify="right", ratio=2)
+    table.add_column("U", ratio=1)
+    table.add_column("St", justify="center", ratio=1)
 
+    count = 0
     for n in names:
         if n not in payload["sensors"]:
             continue
         sv = payload["sensors"][n]
-        val_txt = "—" if sv["value"] is None else f"{sv['value']:.2f}"
+        val_txt = "—" if sv["value"] is None else f"{sv['value']:.0f}"
         status = Text("OK", style="green") if sv["ok"] else Text("ERR", style="red")
         table.add_row(n, val_txt, sv["unit"], status)
+        count += 1
+        if count >= max_items:
+            break
 
     return Panel(table, title="Sensors", border_style="cyan")
+
+
+# NOVO: painel de tendências
+
+def _trend_arrow(values: List[float]) -> Text:
+    if len(values) < 3:
+        return Text("→", style="white")
+    delta = values[-1] - values[-3]
+    if delta > 0.5:
+        return Text("↑", style="green")
+    if delta < -0.5:
+        return Text("↓", style="red")
+    return Text("→", style="yellow")
+
+
+def trends_panel(payload) -> Panel:
+    names = CATEGORIES.get(current_category, CATEGORIES["all"])
+
+    term_height = console.size.height
+    available_for_trends = max(5, int(term_height * 0.18))
+    max_items = max(3, available_for_trends - 3)
+
+    table = Table(expand=True, show_header=True, header_style="bold white")
+    table.add_column("Sensor", style="cyan", ratio=3)
+    table.add_column("Now", justify="right", ratio=2)
+    table.add_column("Trend", justify="center", ratio=1)
+
+    count = 0
+    for n in names:
+        if n not in payload["sensors"]:
+            continue
+        sv = payload["sensors"][n]
+        now = 0.0 if sv["value"] is None else float(sv["value"])
+        hist = list(history.get(n, []))
+        arrow = _trend_arrow(hist)
+        table.add_row(n, f"{now:.0f}", arrow)
+        count += 1
+        if count >= max_items:
+            break
+
+    return Panel(table, title="Trends", border_style="magenta")
+
+
+# NOVO: painel de estatísticas rápidas
+
+def quick_stats_panel(payload) -> Panel:
+    names = CATEGORIES.get(current_category, CATEGORIES["all"])
+
+    term_height = console.size.height
+    available_for_stats = max(5, int(term_height * 0.18))
+    max_items = max(3, available_for_stats - 3)
+
+    table = Table(expand=True, show_header=True, header_style="bold white")
+    table.add_column("Sensor", style="cyan", ratio=3)
+    table.add_column("Min", justify="right", ratio=1)
+    table.add_column("Avg", justify="right", ratio=1)
+    table.add_column("Max", justify="right", ratio=1)
+
+    count = 0
+    for n in names:
+        hist = list(history.get(n, []))
+        if not hist:
+            table.add_row(n, "—", "—", "—")
+        else:
+            mn, mx = min(hist), max(hist)
+            avg = sum(hist) / len(hist)
+            table.add_row(n, f"{mn:.0f}", f"{avg:.0f}", f"{mx:.0f}")
+        count += 1
+        if count >= max_items:
+            break
+
+    return Panel(table, title="Quick Stats", border_style="yellow")
+
+
+# NOVO: sumário de alertas simples
+
+def alerts_summary_panel(payload) -> Panel:
+    names = CATEGORIES.get(current_category, CATEGORIES["all"])
+    ok_count = 0
+    err_count = 0
+    near_limit = 0
+    for n in names:
+        if n not in payload["sensors"]:
+            continue
+        sv = payload["sensors"][n]
+        if sv["ok"]:
+            ok_count += 1
+        else:
+            err_count += 1
+        meta = SENSOR_MAP.get(n)
+        if meta and sv["value"] is not None:
+            p = percent(float(sv["value"]), float(meta["min"]), float(meta["max"]))
+            if p >= 0.9:
+                near_limit += 1
+    text = f"OK:{ok_count} ERR:{err_count} NearMax:{near_limit}"
+    style = "green" if err_count == 0 else "red"
+    return Panel(Text(text, style=style), title="Alerts", border_style=style)
+
 
 
 def errors_panel(payload) -> Panel:
@@ -154,19 +281,27 @@ def build_layout(payload) -> Layout:
             history[name].append(float(sv["value"]))
 
     layout = Layout()
-    # Cabeçalho, corpo (gauges + tabela), controles e erros
+    # Cabeçalho, corpo, controles e erros
     layout.split_column(
         Layout(header_panel(payload), name="header", size=3),
         Layout(name="body"),
-        Layout(controls_panel(), name="controls", size=3),
-        Layout(errors_panel(payload), name="errors", size=4),
+        Layout(controls_panel(), name="controls", size=2),
+        Layout(errors_panel(payload), name="errors", size=3),
     )
-    # Dentro do corpo, empilhamos gauges e tabela para caber na tela
+
+    # Corpo: gauges no topo; abaixo, duas colunas (trends + quick stats) e um alerts compacto
     body = Layout()
+    gauges_size = max(7, int(console.size.height * 0.32))
     body.split_column(
-        Layout(sensors_gauges_panel(payload), name="gauges", size=console.size.height // 3),
-        Layout(sensors_status_table_panel(payload), name="table"),
+        Layout(sensors_gauges_panel(payload), name="gauges", size=gauges_size),
+        Layout(name="analytics"),
+        Layout(alerts_summary_panel(payload), name="alerts", size=3),
     )
+    body["analytics"].split_row(
+        Layout(trends_panel(payload), name="trends"),
+        Layout(quick_stats_panel(payload), name="qstats"),
+    )
+
     layout["body"].update(body)
     return layout
 

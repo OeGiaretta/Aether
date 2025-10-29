@@ -38,7 +38,7 @@ if "reader" not in st.session_state:
 reader = st.session_state["reader"]
 
 # Ler dados primeiro
-payload = normalize(reader.read())
+    payload = normalize(reader.read())
 
 # Log e salvar dados
 log_telemetry(payload)
