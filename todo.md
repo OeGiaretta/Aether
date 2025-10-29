@@ -11,7 +11,7 @@
 | Etapa | Progresso | Barra |
 |:------|:-----------:|:------|
 | Core | 60% | ██████░░░░░ |
-| UI Streamlit | 10% | ██░░░░░░░░░ |
+| UI Streamlit | 85% | █████████░░░ |
 | UI Terminal (TUI) | 0% | ░░░░░░░░░░░ |
 | Utils | 40% | ████░░░░░░░ |
 | Testes | 0% | ░░░░░░░░░░░ |
@@ -20,7 +20,7 @@
 | CLI / Main | 30% | ███░░░░░░░░ |
 
 **Progresso total estimado:**  
-🟢 **45% concluído** — núcleo funcional com mock reader e contrato de dados implementados.
+🟢 **70% concluído** — dashboard Streamlit completo com gauges, gráficos, logs e storage implementados.
 
 ---
 
@@ -31,8 +31,8 @@
 - [X] `sensor_map.py` — mapeamento de PIDs, unidades e faixas válidas  
 - [X] `obd_reader.py` — implementar `MockObdReader` primeiro (geração de sinais plausíveis)  
 - [X] `data_manager.py` — normalização, conversões e clamps por faixa  
-- [ ] `logger.py` — registro de logs e erros  
-- [ ] `storage.py` — armazenamento local (CSV mínimo, preparar para SQLite depois)  
+- [x] `logger.py` — registro de logs e erros  
+- [x] `storage.py` — armazenamento local (CSV mínimo, preparar para SQLite depois)  
 
 > ✅ **Progresso:** 60% — Mock reader funcional, contrato de dados e normalização implementados  
 
@@ -41,11 +41,11 @@
 ### 🖥️ Etapa 2 — Interface de Usuário (UI)
 
 #### 🌐 Modo Web – Streamlit
-- [ ] `streamlit_dashboard.py` — layout e gauges  
-- [ ] `widgets/` — componentes visuais (cards, indicadores, gauges)  
-- [ ] `charts/` — gráficos de histórico  
+- [x] `streamlit_dashboard.py` — layout e gauges  
+- [x] `widgets/` — componentes visuais (cards, indicadores, gauges)  
+- [x] `charts/` — gráficos de histórico  
 
-> ⏳ **Progresso:** 10% — MVP primeiro (3–5 PIDs), histórico curto  
+> ✅ **Progresso:** 85% — Dashboard completo com gauges, gráficos, logs e storage  
 
 #### 💻 Modo Terminal – TUI
 - [ ] `terminal_dashboard.py` — interface estilo *htop*  

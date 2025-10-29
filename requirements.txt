@@ -1,8 +1,8 @@
-streamlit==1.38.0
-plotly==5.24.1
-pandas==2.2.2
+streamlit==1.50.0
+plotly==6.3.1
+pandas==2.3.3
 python-dotenv==1.0.1
-rich==13.7.1
-textual==0.52.1
-python-OBD==0.7.2
+rich==14.2.0
+textual==6.4.0
+python-OBD==0.7.3
 pyserial==3.5
