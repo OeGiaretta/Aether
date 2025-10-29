@@ -78,42 +78,75 @@ AETHER/
 
 ---
 
-## 🚀 Como Executar
+## 🚀 Início Rápido
 
-### 1️⃣ Clonar o repositório
+### 1️⃣ Instalação
 ```bash
-git clone https://github.com/SEU_USUARIO/AETHER.git
-cd AETHER
-````
+# Clonar repositório
+git clone https://github.com/OeGiaretta/Aether.git
+cd Aether
 
-### 2️⃣ Instalar dependências
+# Criar ambiente virtual
+python -m venv venv
+source venv/bin/activate  # Linux/macOS
+# venv\Scripts\activate   # Windows
 
-```bash
+# Instalar dependências
 pip install -r requirements.txt
 ```
 
-### 3️⃣ Configurar o adaptador Bluetooth
-
-Edite o arquivo `.env`:
-
-```
-OBD_DEVICE=rfcomm0
-REFRESH_RATE=1.0
-```
-
-### 4️⃣ Rodar o dashboard
-
-**Interface Terminal (TUI):**
-
+### 2️⃣ Executar Dashboard
 ```bash
-python main.py --ui terminal
+# Interface Web (Recomendado)
+streamlit run ui/streamlit_dashboard.py
+
+# Acesse: http://localhost:8501
 ```
 
-**Interface Web (Streamlit):**
-
+### 3️⃣ Modo Desenvolvimento
 ```bash
-python main.py --ui streamlit
+# Executar com dados mock
+python dev_run.py
 ```
+
+---
+
+## 📚 Documentação Completa
+
+| Documento | Descrição | Link |
+|-----------|-----------|------|
+| **📖 Manual do Usuário** | Guia completo de utilização | [MANUAL_USUARIO.md](docs/MANUAL_USUARIO.md) |
+| **🔧 Guia de Instalação** | Instalação detalhada e troubleshooting | [INSTALACAO.md](docs/INSTALACAO.md) |
+| **⚙️ Documentação Técnica** | Arquitetura e implementação | [TECNICA.md](docs/TECNICA.md) |
+| **📚 API Reference** | Referência completa das APIs | [API.md](docs/API.md) |
+| **🗺️ Roadmap** | Plano de desenvolvimento | [todo.md](todo.md) |
+
+---
+
+## 🎯 Funcionalidades Principais
+
+### 🖥️ Dashboard Streamlit
+- **Gauges visuais interativos** para dados críticos
+- **Gráficos de histórico** e análise de tendências  
+- **Sistema de alertas** em tempo real
+- **Sidebar com controles** e estatísticas
+- **Interface responsiva** para desktop e mobile
+
+### 📊 Sensores Monitorados
+- **RPM do Motor** - rotações por minuto
+- **Velocidade** - km/h atual
+- **Temperatura do Motor** - °C do líquido de arrefecimento
+- **Acelerador** - posição do pedal em %
+- **Carga do Motor** - percentual de carga
+- **Temperatura de Admissão** - °C do ar aspirado
+- **Pressão MAP** - pressão do coletor em kPa
+- **Nível de Combustível** - percentual do tanque
+
+### 🔧 Sistema de Logs e Storage
+- **Logs centralizados** com rotação automática
+- **Armazenamento CSV** para dados históricos
+- **Estatísticas avançadas** dos dados coletados
+- **Exportação** em múltiplos formatos
 
 ---
 
