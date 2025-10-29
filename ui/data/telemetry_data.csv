@@ -1,0 +1,2 @@
+timestamp,source,rpm,speed,coolant_temp,throttle,engine_load,intake_temp,map,fuel_pressure,fuel_level,fuel_consumption,fuel_consumption_rate,errors
+2025-10-29T08:34:47.821336,mock,,0.0,0.0,-40.0,0.0,4.086923444793166,-35.31466627665181,13.412881363844594,25.456564108062672,0.0,0.0,5.388870893838941
